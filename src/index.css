@@ -1,0 +1,55 @@
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+:root {
+  --bg: #0e0c0a;
+  --bg-card: #151210;
+  --bg-surface: #1a1714;
+  --gold: #c9a84c;
+  --gold-dim: #8a7535;
+  --gold-bright: #e4c55a;
+  --cream: #e8dcc8;
+  --cream-dim: #a89b86;
+  --text: #c5bba8;
+  --text-dim: #7a7164;
+  --border: #2a2520;
+  --border-light: #3a332b;
+
+  --serif: "Cormorant Garamond", "Georgia", "Times New Roman", serif;
+  --display: "Cinzel", "Georgia", serif;
+}
+
+html {
+  font-size: 18px;
+  scroll-behavior: smooth;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  font-family: var(--serif);
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.7;
+  overflow-x: hidden;
+}
+
+#root {
+  min-height: 100vh;
+}
+
+::selection {
+  background: var(--gold);
+  color: var(--bg);
+}
+
+img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
