@@ -9,42 +9,438 @@
   position: relative;
 }
 
-/* --- Progress Navigation --- */
+/* ============================================
+   Top Bar — fixed, appears after scroll
+   ============================================ */
 
-.progress-dots {
+.top-bar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 200;
+  opacity: 0;
+  transform: translateY(-100%);
+  transition: opacity 0.5s ease, transform 0.5s ease;
+  pointer-events: none;
+}
+
+.top-bar-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 52px;
+  background: linear-gradient(180deg, var(--bg) 40%, transparent);
+  z-index: 199;
+  opacity: 0;
+  transition: opacity 0.5s ease;
+  pointer-events: none;
+}
+
+.top-bar-backdrop.visible {
+  opacity: 1;
+}
+
+.top-bar-backdrop.visible ~ .slides-container .top-bar,
+.app:has(.top-bar-backdrop.visible) .top-bar {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+
+.top-bar-inner {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 10px 24px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.top-bar-index-btn {
+  background: none;
+  border: none;
+  color: var(--gold-dim);
+  cursor: pointer;
+  padding: 6px;
+  border-radius: 4px;
+  transition: color 0.3s ease, background 0.3s ease;
+  flex-shrink: 0;
+}
+
+.top-bar-index-btn:hover {
+  color: var(--gold);
+  background: var(--gold-glow);
+}
+
+.top-bar-context {
+  flex: 1;
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  min-width: 0;
+  overflow: hidden;
+}
+
+.top-bar-chapter {
+  font-family: var(--display);
+  font-size: 0.65rem;
+  letter-spacing: 0.15em;
+  color: var(--cream-dim);
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.top-bar-sep {
+  color: var(--border-light);
+  font-size: 0.7rem;
+}
+
+.top-bar-point {
+  font-family: var(--display);
+  font-size: 0.6rem;
+  letter-spacing: 0.1em;
+  color: var(--text-dim);
+  text-transform: uppercase;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.top-bar-book {
+  font-family: var(--display);
+  font-size: 0.6rem;
+  letter-spacing: 0.2em;
+  color: var(--gold-dim);
+  text-transform: uppercase;
+  flex-shrink: 0;
+  opacity: 0.6;
+}
+
+.top-bar-progress {
+  height: 1px;
+  background: var(--border);
+  position: relative;
+  overflow: hidden;
+}
+
+.top-bar-progress-fill {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  background: linear-gradient(90deg, var(--gold-dim), var(--gold));
+  transition: width 0.4s ease-out;
+}
+
+/* ============================================
+   Side Progress — chapter-aware
+   ============================================ */
+
+.side-progress {
   position: fixed;
   right: 20px;
   top: 50%;
   transform: translateY(-50%);
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 6px;
   z-index: 100;
 }
 
-.progress-dot {
+.side-chapter {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0;
+}
+
+.side-chapter-dot {
   width: 8px;
   height: 8px;
   border-radius: 50%;
-  border: 1px solid var(--gold-dim);
+  border: 1.5px solid var(--gold-dim);
   background: transparent;
   cursor: pointer;
   padding: 0;
   transition: all 0.4s ease;
+  position: relative;
+  z-index: 2;
 }
 
-.progress-dot:hover {
+.side-chapter-dot:hover {
   border-color: var(--gold);
   background: var(--gold-dim);
+  box-shadow: 0 0 10px var(--gold-glow);
 }
 
-.progress-dot.active {
+.side-chapter.active .side-chapter-dot {
   background: var(--gold);
   border-color: var(--gold);
-  box-shadow: 0 0 8px rgba(201, 168, 76, 0.4);
+  box-shadow: 0 0 12px rgba(201, 168, 76, 0.4);
 }
 
-/* --- Slides Container --- */
+.side-chapter-track {
+  width: 1px;
+  height: 40px;
+  background: var(--border);
+  position: relative;
+  overflow: hidden;
+}
+
+.side-chapter:last-child .side-chapter-track {
+  display: none;
+}
+
+.side-chapter-fill {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  background: var(--gold-dim);
+  transition: height 0.4s ease-out;
+}
+
+/* ============================================
+   Chapter Index Overlay
+   ============================================ */
+
+.index-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  background: var(--bg-overlay);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  overflow-y: auto;
+  padding: 40px 24px;
+  animation: indexFadeIn 0.35s ease-out;
+}
+
+@keyframes indexFadeIn {
+  from {
+    opacity: 0;
+    backdrop-filter: blur(0);
+  }
+  to {
+    opacity: 1;
+    backdrop-filter: blur(20px);
+  }
+}
+
+.index-content {
+  max-width: 560px;
+  width: 100%;
+  position: relative;
+  animation: indexSlideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes indexSlideUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.index-close {
+  position: absolute;
+  top: 0;
+  right: 0;
+  background: none;
+  border: none;
+  color: var(--text-dim);
+  cursor: pointer;
+  padding: 8px;
+  border-radius: 4px;
+  transition: color 0.3s ease, background 0.3s ease;
+}
+
+.index-close:hover {
+  color: var(--gold);
+  background: var(--gold-glow);
+}
+
+.index-header {
+  text-align: center;
+  margin-bottom: 48px;
+}
+
+.index-ornament {
+  color: var(--gold-dim);
+  font-size: 14px;
+  margin-bottom: 20px;
+  opacity: 0.5;
+}
+
+.index-title {
+  font-family: var(--display);
+  font-size: 0.85rem;
+  font-weight: 400;
+  letter-spacing: 0.3em;
+  color: var(--cream);
+  text-transform: uppercase;
+  margin: 0 0 20px;
+}
+
+.index-rule {
+  width: 60px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--gold-dim), transparent);
+  margin: 0 auto;
+}
+
+/* Chapter cards */
+
+.index-chapter {
+  margin-bottom: 40px;
+  padding-bottom: 40px;
+  border-bottom: 1px solid var(--border);
+}
+
+.index-chapter:last-child {
+  border-bottom: none;
+  margin-bottom: 0;
+  padding-bottom: 0;
+}
+
+.index-chapter.active .index-chapter-name {
+  color: var(--gold);
+}
+
+.index-chapter-title {
+  display: flex;
+  align-items: baseline;
+  gap: 14px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  width: 100%;
+  text-align: left;
+  transition: opacity 0.3s ease;
+}
+
+.index-chapter-title:hover {
+  opacity: 0.8;
+}
+
+.index-chapter-num {
+  font-family: var(--display);
+  font-size: 0.7rem;
+  color: var(--gold-dim);
+  letter-spacing: 0.1em;
+  flex-shrink: 0;
+  min-width: 16px;
+}
+
+.index-chapter-name {
+  font-family: var(--display);
+  font-size: 1.1rem;
+  font-weight: 400;
+  letter-spacing: 0.1em;
+  color: var(--cream);
+  text-transform: uppercase;
+  transition: color 0.3s ease;
+}
+
+.index-chapter-tagline {
+  font-family: var(--serif);
+  font-size: 0.95rem;
+  font-style: italic;
+  color: var(--text-dim);
+  font-weight: 300;
+  margin: 6px 0 0 30px;
+}
+
+.index-points {
+  list-style: none;
+  margin: 20px 0 0 30px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2px 24px;
+}
+
+.index-point {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 5px 0;
+  width: 100%;
+  text-align: left;
+  transition: opacity 0.2s ease;
+}
+
+.index-point:hover {
+  opacity: 0.7;
+}
+
+.index-point.active .index-point-num {
+  color: var(--gold);
+}
+
+.index-point.active .index-point-heading {
+  color: var(--cream);
+}
+
+.index-point-num {
+  font-family: var(--display);
+  font-size: 0.6rem;
+  color: var(--gold-dim);
+  letter-spacing: 0.1em;
+  flex-shrink: 0;
+  min-width: 20px;
+  transition: color 0.3s ease;
+}
+
+.index-point-heading {
+  font-family: var(--serif);
+  font-size: 0.8rem;
+  color: var(--text-dim);
+  font-weight: 400;
+  letter-spacing: 0.02em;
+  transition: color 0.3s ease;
+}
+
+/* ============================================
+   Chapter Divider
+   ============================================ */
+
+.chapter-divider {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  padding: 40px 0 60px;
+  width: 100%;
+}
+
+.chapter-divider-line {
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--border-light), transparent);
+}
+
+.chapter-divider-ornament {
+  font-size: 10px;
+  color: var(--gold-dim);
+  opacity: 0.5;
+  letter-spacing: 4px;
+  flex-shrink: 0;
+}
+
+/* ============================================
+   Slides Container
+   ============================================ */
 
 .slides-container {
   display: flex;
@@ -54,6 +450,7 @@
 .slide-wrapper {
   min-height: 100vh;
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
   padding: 80px 0;
@@ -63,7 +460,9 @@
   padding-top: 0;
 }
 
-/* --- Title Slide --- */
+/* ============================================
+   Title Slide
+   ============================================ */
 
 .slide--title {
   display: flex;
@@ -80,12 +479,25 @@
   font-size: 20px;
   letter-spacing: 12px;
   margin-bottom: 48px;
-  opacity: 0.6;
+  opacity: 0;
+  animation: ornamentReveal 1.2s ease 0.3s forwards;
+}
+
+@keyframes ornamentReveal {
+  from {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+  to {
+    opacity: 0.6;
+    transform: scale(1);
+  }
 }
 
 .title-ornament--bottom {
   margin-bottom: 0;
   margin-top: 48px;
+  animation-delay: 1.6s;
 }
 
 .title-main {
@@ -97,18 +509,39 @@
   margin: 0;
   line-height: 1.1;
   text-transform: uppercase;
+  opacity: 0;
+  animation: titleReveal 1s ease 0.5s forwards;
+}
+
+@keyframes titleReveal {
+  from {
+    opacity: 0;
+    letter-spacing: 0.5em;
+  }
+  to {
+    opacity: 1;
+    letter-spacing: 0.35em;
+  }
 }
 
 .title-rule {
   width: 120px;
   height: 1px;
-  background: linear-gradient(
-    90deg,
-    transparent,
-    var(--gold-dim),
-    transparent
-  );
+  background: linear-gradient(90deg, transparent, var(--gold-dim), transparent);
   margin: 32px auto;
+  opacity: 0;
+  animation: ruleExpand 0.8s ease 0.9s forwards;
+}
+
+@keyframes ruleExpand {
+  from {
+    opacity: 0;
+    width: 0;
+  }
+  to {
+    opacity: 1;
+    width: 120px;
+  }
 }
 
 .title-chapter {
@@ -119,6 +552,15 @@
   letter-spacing: 0.18em;
   margin: 0 0 8px;
   text-transform: uppercase;
+  opacity: 0;
+  animation: fadeUp 0.7s ease 1s forwards;
+}
+
+.title-chapter--large {
+  font-size: 2rem;
+  letter-spacing: 0.15em;
+  color: var(--gold);
+  margin-bottom: 12px;
 }
 
 .title-tagline {
@@ -128,6 +570,8 @@
   color: var(--cream-dim);
   font-weight: 300;
   margin: 0;
+  opacity: 0;
+  animation: fadeUp 0.7s ease 1.1s forwards;
 }
 
 .title-spacer {
@@ -141,6 +585,8 @@
   color: var(--text-dim);
   text-transform: uppercase;
   margin: 0 0 12px;
+  opacity: 0;
+  animation: fadeUp 0.7s ease 1.3s forwards;
 }
 
 .title-description {
@@ -149,9 +595,24 @@
   font-style: italic;
   color: var(--text-dim);
   font-weight: 300;
+  opacity: 0;
+  animation: fadeUp 0.7s ease 1.4s forwards;
 }
 
-/* --- Content Slide --- */
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ============================================
+   Content Slide
+   ============================================ */
 
 .slide--content {
   width: 100%;
@@ -166,7 +627,23 @@
   line-height: 1.8;
   margin-bottom: 32px;
   padding-left: 20px;
-  border-left: 1px solid var(--gold-dim);
+  border-left: 1px solid transparent;
+  position: relative;
+}
+
+.slide-bridge::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 1px;
+  height: 0;
+  background: linear-gradient(180deg, var(--gold), var(--gold-dim));
+  transition: height 0.8s ease 0.2s;
+}
+
+.slide-wrapper.visible .slide-bridge::before {
+  height: 100%;
 }
 
 .slide-header {
@@ -190,6 +667,13 @@
   flex: 1;
   height: 1px;
   background: linear-gradient(90deg, var(--border-light), transparent);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.6s ease 0.3s;
+}
+
+.slide-wrapper.visible .slide-number-rule {
+  transform: scaleX(1);
 }
 
 .slide-heading {
@@ -218,7 +702,9 @@
   hyphens: auto;
 }
 
-/* --- Artwork --- */
+/* ============================================
+   Artwork
+   ============================================ */
 
 .slide-artwork {
   position: relative;
@@ -227,18 +713,29 @@
   border-radius: 2px;
   background: var(--bg-card);
   border: 1px solid var(--border);
+  transition: border-color 0.4s ease;
 }
 
-.slide-artwork img {
+.slide-artwork:hover {
+  border-color: var(--border-light);
+}
+
+.slide-artwork-frame {
+  overflow: hidden;
+}
+
+.slide-artwork-frame img {
   width: 100%;
   height: auto;
   display: block;
   opacity: 0;
-  transition: opacity 0.8s ease;
+  transition: opacity 1s ease, transform 8s ease;
+  transform: scale(1.03);
 }
 
-.slide-artwork.loaded img {
+.slide-artwork.loaded .slide-artwork-frame img {
   opacity: 1;
+  transform: scale(1);
 }
 
 .artwork-info {
@@ -275,18 +772,21 @@
   margin-bottom: 32px;
 }
 
-/* --- Map --- */
+/* ============================================
+   Map
+   ============================================ */
 
 .slide-map {
   border-radius: 2px;
   overflow: hidden;
   border: 1px solid var(--border);
   opacity: 0.85;
-  transition: opacity 0.3s ease;
+  transition: opacity 0.4s ease, border-color 0.4s ease;
 }
 
 .slide-map:hover {
   opacity: 1;
+  border-color: var(--border-light);
 }
 
 .slide-map img {
@@ -294,7 +794,9 @@
   display: block;
 }
 
-/* --- Footer --- */
+/* ============================================
+   Footer
+   ============================================ */
 
 .app-footer {
   text-align: center;
@@ -317,6 +819,75 @@
 }
 
 /* ============================================
+   Scroll-driven fade-in animations
+   ============================================ */
+
+.slide-wrapper {
+  opacity: 0;
+  transform: translateY(24px);
+  transition: opacity 0.7s ease, transform 0.7s ease;
+}
+
+.slide-wrapper.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Staggered reveal for content elements */
+.slide--content .slide-bridge,
+.slide--content .slide-header,
+.slide--content .slide-body,
+.slide--content .slide-artwork,
+.slide--content .slide-caption,
+.slide--content .slide-map {
+  opacity: 0;
+  transform: translateY(16px);
+  transition: opacity 0.6s ease, transform 0.6s ease;
+}
+
+.slide-wrapper.visible .slide-bridge {
+  opacity: 1;
+  transform: translateY(0);
+  transition-delay: 0.1s;
+}
+
+.slide-wrapper.visible .slide-header {
+  opacity: 1;
+  transform: translateY(0);
+  transition-delay: 0.2s;
+}
+
+.slide-wrapper.visible .slide-body {
+  opacity: 1;
+  transform: translateY(0);
+  transition-delay: 0.3s;
+}
+
+.slide-wrapper.visible .slide-artwork {
+  opacity: 1;
+  transform: translateY(0);
+  transition-delay: 0.5s;
+}
+
+.slide-wrapper.visible .slide-caption {
+  opacity: 1;
+  transform: translateY(0);
+  transition-delay: 0.7s;
+}
+
+.slide-wrapper.visible .slide-map {
+  opacity: 1;
+  transform: translateY(0);
+  transition-delay: 0.9s;
+}
+
+/* Title slides — immediate visibility for first, animated for subsequent */
+.slide-wrapper:first-child {
+  opacity: 1;
+  transform: none;
+}
+
+/* ============================================
    Responsive
    ============================================ */
 
@@ -325,14 +896,17 @@
     padding: 0 18px;
   }
 
-  .progress-dots {
+  .side-progress {
     right: 10px;
-    gap: 6px;
   }
 
-  .progress-dot {
+  .side-chapter-dot {
     width: 6px;
     height: 6px;
+  }
+
+  .side-chapter-track {
+    height: 28px;
   }
 
   .title-main {
@@ -340,8 +914,17 @@
     letter-spacing: 0.25em;
   }
 
+  @keyframes titleReveal {
+    from { opacity: 0; letter-spacing: 0.35em; }
+    to { opacity: 1; letter-spacing: 0.25em; }
+  }
+
   .title-chapter {
     font-size: 1.05rem;
+  }
+
+  .title-chapter--large {
+    font-size: 1.5rem;
   }
 
   .slide-heading {
@@ -367,12 +950,33 @@
     flex-direction: column;
     gap: 4px;
   }
+
+  .top-bar-inner {
+    padding: 8px 16px;
+  }
+
+  .top-bar-book {
+    display: none;
+  }
+
+  .index-points {
+    grid-template-columns: 1fr;
+  }
+
+  .index-chapter-name {
+    font-size: 0.95rem;
+  }
 }
 
 @media (max-width: 480px) {
   .title-main {
     font-size: 2.2rem;
     letter-spacing: 0.2em;
+  }
+
+  @keyframes titleReveal {
+    from { opacity: 0; letter-spacing: 0.3em; }
+    to { opacity: 1; letter-spacing: 0.2em; }
   }
 
   .slide-wrapper {
@@ -382,75 +986,12 @@
   .slide-bridge {
     font-size: 1rem;
   }
-}
 
-/* ============================================
-   Scroll-driven fade-in animations
-   ============================================ */
-
-.slide-wrapper {
-  opacity: 0;
-  transform: translateY(30px);
-  animation: slideIn 0.8s ease forwards;
-}
-
-@keyframes slideIn {
-  to {
-    opacity: 1;
-    transform: translateY(0);
+  .top-bar-point {
+    display: none;
   }
-}
 
-/* Use intersection observer for staggered reveals */
-.slide--content .slide-bridge,
-.slide--content .slide-header,
-.slide--content .slide-body,
-.slide--content .slide-artwork,
-.slide--content .slide-caption,
-.slide--content .slide-map {
-  opacity: 0;
-  transform: translateY(20px);
-  transition: opacity 0.6s ease, transform 0.6s ease;
-}
-
-.slide-wrapper.visible .slide-bridge {
-  opacity: 1;
-  transform: translateY(0);
-  transition-delay: 0.1s;
-}
-
-.slide-wrapper.visible .slide-header {
-  opacity: 1;
-  transform: translateY(0);
-  transition-delay: 0.2s;
-}
-
-.slide-wrapper.visible .slide-body {
-  opacity: 1;
-  transform: translateY(0);
-  transition-delay: 0.3s;
-}
-
-.slide-wrapper.visible .slide-artwork {
-  opacity: 1;
-  transform: translateY(0);
-  transition-delay: 0.4s;
-}
-
-.slide-wrapper.visible .slide-caption {
-  opacity: 1;
-  transform: translateY(0);
-  transition-delay: 0.5s;
-}
-
-.slide-wrapper.visible .slide-map {
-  opacity: 1;
-  transform: translateY(0);
-  transition-delay: 0.6s;
-}
-
-/* Title slide always visible */
-.slide-wrapper:first-child {
-  opacity: 1;
-  transform: none;
+  .top-bar-sep {
+    display: none;
+  }
 }
