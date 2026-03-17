@@ -415,7 +415,6 @@ function ChapterView({ chapters, chapterIndex, onNavigateChapter, onBackToBrowse
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: "instant" });
     setCurrentSlide(0);
-    slideRefs.current = [];
   }, [chapterIndex]);
 
   const scrollToSlide = useCallback((index) => {
