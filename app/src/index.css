@@ -1,0 +1,88 @@
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+:root {
+  --bg: #0e0c0a;
+  --bg-card: #151210;
+  --bg-surface: #1a1714;
+  --bg-overlay: rgba(10, 8, 6, 0.92);
+  --gold: #c9a84c;
+  --gold-dim: #8a7535;
+  --gold-bright: #e4c55a;
+  --gold-glow: rgba(201, 168, 76, 0.08);
+  --cream: #e8dcc8;
+  --cream-dim: #a89b86;
+  --text: #c5bba8;
+  --text-dim: #7a7164;
+  --border: #2a2520;
+  --border-light: #3a332b;
+
+  --serif: "Cormorant Garamond", "Georgia", "Times New Roman", serif;
+  --display: "Cinzel", "Georgia", serif;
+}
+
+html {
+  font-size: 18px;
+  scroll-behavior: smooth;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  font-family: var(--serif);
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.7;
+  overflow-x: hidden;
+}
+
+/* Subtle grain texture overlay */
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 9999;
+  opacity: 0.035;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-repeat: repeat;
+  background-size: 256px 256px;
+}
+
+#root {
+  min-height: 100vh;
+}
+
+::selection {
+  background: var(--gold);
+  color: var(--bg);
+}
+
+img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--border-light);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--gold-dim);
+}

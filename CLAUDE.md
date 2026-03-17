@@ -1,0 +1,1 @@
+This folder contains the book dominion as an epub, and i want to build a visual journey through the book of 12 key points for each chapter, accompanied by 12 beautiful artworks to accompany each point. I want the design to be elegent and feel like antiquity, perhaps regal in a way but not gaudy.
